@@ -1,8 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 // Big Five 10-Item Personality Test (TIPI - short and public domain)
 const questions = [
@@ -104,8 +105,29 @@ const PersonalityTest = () => {
   const [answers, setAnswers] = useState<Answers>({});
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const allAnswered = Object.keys(answers).length === questions.length;
+
+  const handleSubmit = async () => {
+    if (!user || !allAnswered) return;
+
+    const result = calcScores(answers);
+
+    const { error } = await supabase
+      .from('personality_test_results')
+      .insert({
+        user_id: user.id,
+        scores: result,
+      });
+
+    if (error) {
+      console.error('Error saving personality test results:', error);
+      // In a future step, we could show a toast notification on error.
+    }
+    
+    setSubmitted(true);
+  };
 
   const result = calcScores(answers);
 
@@ -156,7 +178,7 @@ const PersonalityTest = () => {
             <Button
               disabled={!allAnswered}
               className="w-full"
-              onClick={() => setSubmitted(true)}
+              onClick={handleSubmit}
             >
               See my assessment
             </Button>

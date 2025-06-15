@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +7,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { emotions } from "@/data/emotions";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Realization = {
   id: string;
@@ -18,11 +18,19 @@ type Realization = {
   created_at: string;
 };
 
+type PersonalityTestResult = {
+  id: string;
+  created_at: string;
+  scores: Record<string, number>;
+};
+
 const Realizations = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [realizations, setRealizations] = useState<Realization[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [personalityTestHistory, setPersonalityTestHistory] = useState<PersonalityTestResult[]>([]);
+  const [fetchingHistory, setFetchingHistory] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -43,7 +51,28 @@ const Realizations = () => {
       }
       setFetching(false);
     };
-    if (user) fetchRealizations();
+
+    const fetchPersonalityHistory = async () => {
+      if (!user) return;
+      setFetchingHistory(true);
+      const { data, error } = await supabase
+        .from("personality_test_results")
+        .select("id, created_at, scores")
+        .order("created_at", { ascending: false });
+      
+      if (error) {
+        console.error("Error fetching personality history:", error);
+        setPersonalityTestHistory([]);
+      } else {
+        setPersonalityTestHistory(data || []);
+      }
+      setFetchingHistory(false);
+    };
+
+    if (user) {
+      fetchRealizations();
+      fetchPersonalityHistory();
+    }
   }, [user]);
 
   return (
@@ -116,6 +145,51 @@ const Realizations = () => {
             </Table>
           </div>
         )}
+        
+        {/* Personality Awareness History Section */}
+        <div className="mt-12">
+          <h3 className="text-xl font-bold mb-4 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Personality Awareness History
+          </h3>
+          {fetchingHistory ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="animate-spin h-7 w-7 text-blue-500" />
+            </div>
+          ) : personalityTestHistory.length === 0 ? (
+            <div className="text-center text-gray-600 py-8">No personality tests taken yet.</div>
+          ) : (
+            <Accordion type="single" collapsible className="w-full">
+              {personalityTestHistory.map((result) => {
+                const summary = Object.entries(result.scores)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 2)
+                  .map(([trait, score]) => `${trait}: ${score}/7`)
+                  .join(' | ');
+
+                return (
+                  <AccordionItem value={result.id} key={result.id}>
+                    <AccordionTrigger>
+                      <div className="flex justify-between w-full pr-4">
+                        <span>{new Date(result.created_at).toLocaleDateString()}</span>
+                        <span className="text-sm text-gray-600">{summary}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="pl-4 space-y-1">
+                        {Object.entries(result.scores).map(([trait, score]) => (
+                          <li key={trait} className="flex justify-between pr-4">
+                            <span>{trait}</span>
+                            <span className="font-medium">{score} / 7</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          )}
+        </div>
       </Card>
     </div>
   );
