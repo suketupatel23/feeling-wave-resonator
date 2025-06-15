@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { emotions } from "../data/emotions";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Volume2, VolumeOff } from "lucide-react";
 import { useHalftoneAnimation } from "../hooks/useHalftoneAnimation";
+import { useAudioContext } from "../hooks/useAudioContext";
 
 interface HalftoneWaveProps {
   selectedQuestion: string;
@@ -25,6 +26,7 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
   const startTimeRef = useRef(Date.now());
   const [animationPhase, setAnimationPhase] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
+  const { playEmotionSound, stopSound, isMuted, toggleMute } = useAudioContext();
 
   const emotionData = emotions[selectedEmotion as keyof typeof emotions];
   const emotionColor = emotionData ? emotionData.color : "#ffffff";
@@ -32,6 +34,15 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
 
   // Pass rgbColor to the hook!
   const canvasRef = useHalftoneAnimation(rgbColor);
+
+  useEffect(() => {
+    if (emotionData) {
+      playEmotionSound(emotionData.audioType);
+    }
+    return () => {
+      stopSound();
+    };
+  }, [emotionData, playEmotionSound, stopSound]);
 
   useEffect(() => {
     // To make the text animation less jarring and feel less like a "restart",
@@ -146,6 +157,15 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
           aria-label="Exit experience"
         >
           <X size={20} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-white/20"
+          onClick={toggleMute}
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? <VolumeOff size={20} /> : <Volume2 size={20} />}
         </Button>
       </div>
     </div>

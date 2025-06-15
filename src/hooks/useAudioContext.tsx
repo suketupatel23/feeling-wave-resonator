@@ -1,10 +1,11 @@
-
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 
 export const useAudioContext = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorsRef = useRef<OscillatorNode[]>([]);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const volumeRef = useRef(0.08); // Default volume
 
   const initAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
@@ -49,6 +50,24 @@ export const useAudioContext = () => {
     } catch (error) {
       console.warn('Audio stop failed:', error);
     }
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    if (!gainNodeRef.current || !audioContextRef.current) return;
+
+    const gain = gainNodeRef.current.gain;
+    const time = audioContextRef.current.currentTime;
+
+    setIsMuted(current => {
+        const newMutedState = !current;
+        gain.cancelScheduledValues(time);
+        if(newMutedState) {
+            gain.linearRampToValueAtTime(0, time + 0.1);
+        } else {
+            gain.linearRampToValueAtTime(volumeRef.current, time + 0.1);
+        }
+        return newMutedState;
+    });
   }, []);
 
   const createBinauralBeat = useCallback((baseFreq: number, beatFreq: number, audioContext: AudioContext, gainNode: GainNode) => {
@@ -96,8 +115,12 @@ export const useAudioContext = () => {
       
       // Create a new gain node for the new sound.
       const gainNode = audioContext.createGain();
+      
+      // If muted, start with gain 0, otherwise ramp up to volume.
+      const targetVolume = isMuted ? 0 : volumeRef.current;
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.2);
+      gainNode.gain.linearRampToValueAtTime(targetVolume, audioContext.currentTime + 0.2);
+      
       gainNode.connect(audioContext.destination);
       
       let newOscillators: OscillatorNode[] = [];
@@ -144,10 +167,12 @@ export const useAudioContext = () => {
     } catch (error) {
       console.warn('Audio playback failed:', error);
     }
-  }, [initAudioContext, stopSound, createBinauralBeat, createHealingChord]);
+  }, [initAudioContext, stopSound, createBinauralBeat, createHealingChord, isMuted]);
 
   return {
     playEmotionSound,
-    stopSound
+    stopSound,
+    toggleMute,
+    isMuted
   };
 };

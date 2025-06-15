@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { emotions } from "@/data/emotions";
 
 type Realization = {
   id: string;
@@ -47,7 +48,7 @@ const Realizations = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex flex-col items-center py-10">
-      <Card className="w-full max-w-3xl p-8 shadow-lg relative">
+      <Card className="w-full max-w-4xl p-8 shadow-lg relative">
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -84,19 +85,33 @@ const Realizations = () => {
                 <TableRow>
                   <TableHead>Resonate Prompt</TableHead>
                   <TableHead>Emotion</TableHead>
-                  <TableHead>Frequency</TableHead>
+                  <TableHead>Sound</TableHead>
+                  <TableHead>Times Felt</TableHead>
                   <TableHead>Meditation Length (min)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {realizations.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell>{r.prompt}</TableCell>
-                    <TableCell>{r.emotion}</TableCell>
-                    <TableCell>{r.frequency}</TableCell>
-                    <TableCell>{Math.round(r.meditation_length / 60)}</TableCell>
-                  </TableRow>
-                ))}
+                {realizations.map((r) => {
+                  const emotionData = emotions[r.emotion as keyof typeof emotions];
+                  return (
+                    <TableRow key={r.id}>
+                      <TableCell>{r.prompt}</TableCell>
+                      <TableCell>{r.emotion}</TableCell>
+                      <TableCell>
+                        {emotionData ? (
+                          <span className="font-mono text-xs whitespace-nowrap">
+                            {emotionData.frequency}Hz
+                            {emotionData.beat && ` (+${emotionData.beat}Hz)`}
+                          </span>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>{r.frequency}</TableCell>
+                      <TableCell>{Math.round(r.meditation_length / 60)}</TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>

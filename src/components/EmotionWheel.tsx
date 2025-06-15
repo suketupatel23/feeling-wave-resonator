@@ -165,16 +165,25 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
         </svg>
         
         {/* Current emotion display */}
-        {hoveredEmotion && (
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-            <p className="text-sm font-medium text-gray-700 capitalize">
-              {hoveredEmotion}
-            </p>
-            <p className="text-xs text-gray-500">
-              {emotions[hoveredEmotion as keyof typeof emotions].category} healing sound
-            </p>
-          </div>
-        )}
+        {hoveredEmotion && (() => {
+          const emotionData = emotions[hoveredEmotion as keyof typeof emotions];
+          return (
+            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg text-right w-48">
+              <p className="text-sm font-medium text-gray-700 capitalize">
+                {hoveredEmotion}
+              </p>
+              <p className="text-xs text-gray-500">
+                {emotionData.category} healing sound
+              </p>
+              {emotionData.frequency && (
+                <p className="text-xs text-gray-500 mt-1 font-mono">
+                  {emotionData.frequency}Hz
+                  {emotionData.beat && ` (+${emotionData.beat}Hz beat)`}
+                </p>
+              )}
+            </div>
+          )
+        })()}
       </div>
     </div>
   );
