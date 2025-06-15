@@ -29,6 +29,7 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
   const emotionColor = emotionData ? emotionData.color : "#ffffff";
   const rgbColor = hexToRgb(emotionColor);
 
+  // Pass rgbColor to the hook!
   const canvasRef = useHalftoneAnimation(rgbColor);
 
   useEffect(() => {

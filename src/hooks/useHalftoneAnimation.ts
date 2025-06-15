@@ -1,7 +1,9 @@
 
 import { useEffect, useRef } from "react";
 
-export const useHalftoneAnimation = () => {
+type RGBColor = { r: number; g: number; b: number } | null;
+
+export const useHalftoneAnimation = (color?: RGBColor) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -42,7 +44,14 @@ export const useHalftoneAnimation = () => {
 
           ctx.beginPath();
           ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${waveOffset * 0.5})`;
+
+          // Use supplied color if exists, fallback to white
+          let fillColor = "rgba(255, 255, 255, " + waveOffset * 0.5 + ")";
+          if (color) {
+            const { r, g, b } = color;
+            fillColor = `rgba(${r}, ${g}, ${b}, ${waveOffset * 0.5})`;
+          }
+          ctx.fillStyle = fillColor;
           ctx.fill();
         }
       }
@@ -67,7 +76,7 @@ export const useHalftoneAnimation = () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, []);
+  }, [color]);
 
   return canvasRef;
 };
