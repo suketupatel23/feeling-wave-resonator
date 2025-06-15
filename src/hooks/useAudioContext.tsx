@@ -15,22 +15,33 @@ export const useAudioContext = () => {
 
   const stopSound = useCallback(() => {
     try {
-      if (oscillatorsRef.current.length > 0 && gainNodeRef.current) {
+      const oscillatorsToStop = oscillatorsRef.current;
+      const gainNodeToFade = gainNodeRef.current;
+
+      // Clear refs immediately to prevent race conditions with new sounds being created.
+      oscillatorsRef.current = [];
+      gainNodeRef.current = null;
+
+      if (oscillatorsToStop.length > 0 && gainNodeToFade) {
         const audioContext = audioContextRef.current;
         if (audioContext) {
-          gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
+          // Fade out the sound smoothly.
+          gainNodeToFade.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
           
+          // After the fade-out, stop and disconnect the audio nodes.
           setTimeout(() => {
-            oscillatorsRef.current.forEach(osc => {
-              if (osc) {
+            oscillatorsToStop.forEach(osc => {
+              try {
                 osc.stop();
                 osc.disconnect();
+              } catch (e) {
+                // Ignore errors if oscillator is already stopped.
               }
             });
-            oscillatorsRef.current = [];
-            if (gainNodeRef.current) {
-              gainNodeRef.current.disconnect();
-              gainNodeRef.current = null;
+            try {
+              gainNodeToFade.disconnect();
+            } catch (e) {
+              // Ignore errors if gain node is already disconnected.
             }
           }, 100);
         }
@@ -80,10 +91,10 @@ export const useAudioContext = () => {
     try {
       const audioContext = initAudioContext();
       
-      // Stop any existing sound
+      // Stop any existing sound before playing a new one.
       stopSound();
       
-      // Create new gain node
+      // Create a new gain node for the new sound.
       const gainNode = audioContext.createGain();
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.2);
