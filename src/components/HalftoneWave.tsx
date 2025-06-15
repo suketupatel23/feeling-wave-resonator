@@ -7,7 +7,7 @@ import { useHalftoneAnimation } from "../hooks/useHalftoneAnimation";
 interface HalftoneWaveProps {
   selectedQuestion: string;
   selectedEmotion: string;
-  onExit: () => void;
+  onExit: (meditationLength: number) => void;
 }
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -22,6 +22,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 }
 
 const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWaveProps) => {
+  const startTimeRef = useRef(Date.now());
   const [animationPhase, setAnimationPhase] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -44,7 +45,8 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onExit();
+      const meditationLength = Math.round((Date.now() - startTimeRef.current) / 1000);
+      onExit(meditationLength);
       return;
     }
 
@@ -66,6 +68,11 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
     return `${minutes.toString().padStart(2, "0")}:${secs
       .toString()
       .padStart(2, "0")}`;
+  };
+
+  const handleManualExit = () => {
+    const meditationLength = Math.round((Date.now() - startTimeRef.current) / 1000);
+    onExit(meditationLength);
   };
 
 
@@ -135,7 +142,7 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
           variant="ghost"
           size="icon"
           className="rounded-full hover:bg-white/20"
-          onClick={onExit}
+          onClick={handleManualExit}
           aria-label="Exit experience"
         >
           <X size={20} />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import QuestionSelector from "../components/QuestionSelector";
 import EmotionWheel from "../components/EmotionWheel";
@@ -6,6 +5,7 @@ import HalftoneWave from "../components/HalftoneWave";
 import { useAuth } from "@/hooks/useAuth";
 import UserMenu from "@/components/UserMenu";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<string>("");
@@ -23,8 +23,35 @@ const Index = () => {
     setShowWave(true);
   };
 
-  // CHANGE: redirect to /realizations after exiting HalftoneWave
-  const handleWaveExit = () => {
+  const handleWaveExit = async (meditationLength: number) => {
+    if (user) {
+      try {
+        const { count, error: countError } = await supabase
+          .from("realizations")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("emotion", selectedEmotion);
+
+        if (countError) throw countError;
+
+        const frequency = (count ?? 0) + 1;
+
+        const { error: insertError } = await supabase.from("realizations").insert({
+          user_id: user.id,
+          prompt: selectedQuestion,
+          emotion: selectedEmotion,
+          frequency,
+          meditation_length: meditationLength,
+        });
+
+        if (insertError) throw insertError;
+        
+      } catch (error) {
+        console.error("Error saving realization:", error);
+        // We could add a user-facing notification here in the future.
+      }
+    }
+
     setShowWave(false);
     setSelectedEmotion("");
     setSelectedQuestion("");
