@@ -1,10 +1,14 @@
-
 import { useEffect, useRef } from "react";
 
 type RGBColor = { r: number; g: number; b: number } | null;
 
 export const useHalftoneAnimation = (color?: RGBColor) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Store current color in a ref for smooth updates
+  const colorRef = useRef<RGBColor | undefined>(color);
+
+  // Always keep colorRef updated
+  colorRef.current = color;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,10 +49,10 @@ export const useHalftoneAnimation = (color?: RGBColor) => {
           ctx.beginPath();
           ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
 
-          // Use supplied color if exists, fallback to white
+          // Use the latest color from the ref (for smooth updates)
           let fillColor = "rgba(255, 255, 255, " + waveOffset * 0.5 + ")";
-          if (color) {
-            const { r, g, b } = color;
+          if (colorRef.current) {
+            const { r, g, b } = colorRef.current;
             fillColor = `rgba(${r}, ${g}, ${b}, ${waveOffset * 0.5})`;
           }
           ctx.fillStyle = fillColor;
@@ -76,7 +80,8 @@ export const useHalftoneAnimation = (color?: RGBColor) => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [color]);
+    // Only run once on mount
+  }, []);
 
   return canvasRef;
 };
