@@ -73,6 +73,14 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
     onEmotionSelect(emotionKey);
   };
 
+  // Stop sound when hovering over the center circle or outside the wheel
+  const handleCenterHover = () => {
+    if (hoveredEmotion) {
+      setHoveredEmotion("");
+      stopSound();
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -97,7 +105,10 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
         <div className="w-32"></div>
       </div>
 
-      <div className="relative w-full max-w-2xl mx-auto aspect-square">
+      <div 
+        className="relative w-full max-w-2xl mx-auto aspect-square"
+        onMouseLeave={handleEmotionLeave}
+      >
         <svg
           viewBox="0 0 400 400"
           className="w-full h-full drop-shadow-lg"
@@ -148,7 +159,6 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
                     ${isHovered ? 'filter brightness-110 drop-shadow-lg' : 'hover:brightness-105'}
                   `}
                   onMouseEnter={() => handleEmotionHover(key)}
-                  onMouseLeave={handleEmotionLeave}
                   onClick={() => handleEmotionClick(key)}
                   style={{
                     transform: isHovered ? 'scale(1.05)' : 'scale(1)',
@@ -187,6 +197,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
             stroke="#e2e8f0"
             strokeWidth="3"
             className="drop-shadow-md"
+            onMouseEnter={handleCenterHover}
           />
           
           <text
@@ -194,7 +205,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
             y="200"
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-lg font-bold text-gray-700"
+            className="text-lg font-bold text-gray-700 pointer-events-none"
           >
             EMOTIONS
           </text>
