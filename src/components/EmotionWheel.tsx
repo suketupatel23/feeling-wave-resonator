@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -63,7 +62,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
     }
   };
 
-  const handleEmotionLeave = () => {
+  const handleStopSound = () => {
     setHoveredEmotion("");
     stopSound();
   };
@@ -71,14 +70,6 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
   const handleEmotionClick = (emotionKey: string) => {
     stopSound();
     onEmotionSelect(emotionKey);
-  };
-
-  // Stop sound when hovering over the center circle or outside the wheel
-  const handleCenterHover = () => {
-    if (hoveredEmotion) {
-      setHoveredEmotion("");
-      stopSound();
-    }
   };
 
   return (
@@ -107,7 +98,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
 
       <div 
         className="relative w-full max-w-2xl mx-auto aspect-square"
-        onMouseLeave={handleEmotionLeave}
+        onMouseLeave={handleStopSound}
       >
         <svg
           viewBox="0 0 400 400"
@@ -159,6 +150,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
                     ${isHovered ? 'filter brightness-110 drop-shadow-lg' : 'hover:brightness-105'}
                   `}
                   onMouseEnter={() => handleEmotionHover(key)}
+                  onMouseLeave={handleStopSound}
                   onClick={() => handleEmotionClick(key)}
                   style={{
                     transform: isHovered ? 'scale(1.05)' : 'scale(1)',
@@ -197,7 +189,7 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
             stroke="#e2e8f0"
             strokeWidth="3"
             className="drop-shadow-md"
-            onMouseEnter={handleCenterHover}
+            onMouseEnter={handleStopSound}
           />
           
           <text
