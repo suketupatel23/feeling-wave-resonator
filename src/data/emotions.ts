@@ -1,5 +1,13 @@
 
-export const emotions = {
+export type EmotionData = {
+  color: string;
+  audioType: string;
+  category: string;
+  frequency: number;
+  beat?: number;
+};
+
+export const emotions: { [key: string]: EmotionData } = {
   // Anger category (red) - Aggressive healing tones
   anger: { color: "#ff6b6b", audioType: "anger", category: "anger", frequency: 396, beat: 8 },
   enraged: { color: "#ff5252", audioType: "anger", category: "anger", frequency: 396, beat: 8 },
@@ -38,3 +46,4 @@ export const emotions = {
   loathing: { color: "#5f3dc4", audioType: "disgust", category: "disgust", frequency: 852, beat: 10 },
   repugnant: { color: "#7048e8", audioType: "disgust", category: "disgust", frequency: 852, beat: 10 }
 };
+
