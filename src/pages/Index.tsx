@@ -23,10 +23,12 @@ const Index = () => {
     setShowWave(true);
   };
 
+  // CHANGE: redirect to /realizations after exiting HalftoneWave
   const handleWaveExit = () => {
     setShowWave(false);
     setSelectedEmotion("");
     setSelectedQuestion("");
+    navigate("/realizations");
   };
 
   return (
@@ -88,4 +90,3 @@ const Index = () => {
 };
 
 export default Index;
-
