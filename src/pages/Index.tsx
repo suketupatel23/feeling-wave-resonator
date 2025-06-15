@@ -1,13 +1,17 @@
-
 import { useState } from "react";
 import QuestionSelector from "../components/QuestionSelector";
 import EmotionWheel from "../components/EmotionWheel";
 import HalftoneWave from "../components/HalftoneWave";
+import { useAuth } from "@/hooks/useAuth";
+import UserMenu from "@/components/UserMenu";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<string>("");
   const [selectedEmotion, setSelectedEmotion] = useState<string>("");
   const [showWave, setShowWave] = useState(false);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleQuestionSelect = (question: string) => {
     setSelectedQuestion(question);
@@ -36,6 +40,18 @@ const Index = () => {
       
       <div className="container mx-auto px-4 py-8 relative z-10">
         <header className="text-center mb-12">
+          <div className="flex justify-end">
+            {loading ? null : user ? (
+              <UserMenu />
+            ) : (
+              <button
+                className="text-primary underline font-medium"
+                onClick={() => navigate("/auth")}
+              >
+                Login / Signup
+              </button>
+            )}
+          </div>
           <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
             SelfAware
           </h1>
