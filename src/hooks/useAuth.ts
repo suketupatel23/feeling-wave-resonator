@@ -3,12 +3,11 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function useAuth() {
-  const [session, setSession] = useState<null | ReturnType<typeof supabase.auth.getSession>["data"]["session"]>(null);
-  const [user, setUser] = useState<null | NonNullable<ReturnType<typeof supabase.auth.getSession>["data"]["session"]>["user"]>(null);
+  const [session, setSession] = useState<null | Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]>(null);
+  const [user, setUser] = useState<null | NonNullable<Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]>["user"]>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Listen for auth state changes and fetch initial session/profile
   useEffect(() => {
     const {
       data: { subscription },
@@ -22,7 +21,9 @@ export function useAuth() {
       }
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Fix: Await the promise from getSession before accessing .data
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -31,7 +32,7 @@ export function useAuth() {
         setProfile(null);
       }
       setLoading(false);
-    });
+    })();
 
     return () => {
       subscription.unsubscribe();
