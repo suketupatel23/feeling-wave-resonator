@@ -33,6 +33,36 @@ export type Database = {
         }
         Relationships: []
       }
+      realizations: {
+        Row: {
+          created_at: string
+          emotion: string
+          frequency: number
+          id: string
+          meditation_length: number
+          prompt: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emotion: string
+          frequency: number
+          id?: string
+          meditation_length: number
+          prompt: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emotion?: string
+          frequency?: number
+          id?: string
+          meditation_length?: number
+          prompt?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

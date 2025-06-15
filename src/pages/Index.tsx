@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import QuestionSelector from "../components/QuestionSelector";
 import EmotionWheel from "../components/EmotionWheel";
@@ -37,20 +38,32 @@ const Index = () => {
           onExit={handleWaveExit}
         />
       )}
-      
+
       <div className="container mx-auto px-4 py-8 relative z-10">
         <header className="text-center mb-12">
-          <div className="flex justify-end">
-            {loading ? null : user ? (
-              <UserMenu />
-            ) : (
-              <button
-                className="text-primary underline font-medium"
-                onClick={() => navigate("/auth")}
-              >
-                Login / Signup
-              </button>
-            )}
+          <div className="flex justify-between items-center">
+            <div>
+              {user && (
+                <button
+                  className="text-primary underline font-medium mr-5"
+                  onClick={() => navigate("/realizations")}
+                >
+                  My Realizations
+                </button>
+              )}
+            </div>
+            <div>
+              {loading ? null : user ? (
+                <UserMenu />
+              ) : (
+                <button
+                  className="text-primary underline font-medium"
+                  onClick={() => navigate("/auth")}
+                >
+                  Login / Signup
+                </button>
+              )}
+            </div>
           </div>
           <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
             SelfAware
@@ -75,3 +88,4 @@ const Index = () => {
 };
 
 export default Index;
+
