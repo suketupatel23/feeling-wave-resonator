@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -64,7 +65,7 @@ const Realizations = () => {
         console.error("Error fetching personality history:", error);
         setPersonalityTestHistory([]);
       } else {
-        setPersonalityTestHistory(data || []);
+        setPersonalityTestHistory((data as PersonalityTestResult[]) || []);
       }
       setFetchingHistory(false);
     };

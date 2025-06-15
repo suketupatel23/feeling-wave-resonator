@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft } from "lucide-react";
 
 // Big Five 10-Item Personality Test (TIPI - short and public domain)
 const questions = [
@@ -220,5 +222,4 @@ const PersonalityTest = () => {
   );
 };
 
-import { ArrowLeft } from "lucide-react";
 export default PersonalityTest;
