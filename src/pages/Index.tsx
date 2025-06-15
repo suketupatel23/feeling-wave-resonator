@@ -16,13 +16,12 @@ const Index = () => {
   const handleEmotionSelect = (emotion: string) => {
     setSelectedEmotion(emotion);
     setShowWave(true);
-    
-    // Reset after animation
-    setTimeout(() => {
-      setShowWave(false);
-      setSelectedEmotion("");
-      setSelectedQuestion("");
-    }, 4000);
+  };
+
+  const handleWaveExit = () => {
+    setShowWave(false);
+    setSelectedEmotion("");
+    setSelectedQuestion("");
   };
 
   return (
@@ -31,6 +30,7 @@ const Index = () => {
         <HalftoneWave 
           selectedQuestion={selectedQuestion}
           selectedEmotion={selectedEmotion}
+          onExit={handleWaveExit}
         />
       )}
       

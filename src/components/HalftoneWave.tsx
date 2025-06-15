@@ -1,10 +1,12 @@
-
 import { useEffect, useRef, useState } from "react";
 import { emotions } from "../data/emotions";
+import { Button } from "@/components/ui/button";
+import { Plus, X } from "lucide-react";
 
 interface HalftoneWaveProps {
   selectedQuestion: string;
   selectedEmotion: string;
+  onExit: () => void;
 }
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -18,9 +20,10 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
     : null;
 }
 
-const HalftoneWave = ({ selectedQuestion, selectedEmotion }: HalftoneWaveProps) => {
+const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWaveProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [animationPhase, setAnimationPhase] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   const emotionData = emotions[selectedEmotion as keyof typeof emotions];
   const emotionColor = emotionData ? emotionData.color : "#ffffff";
@@ -99,6 +102,33 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion }: HalftoneWaveProps) 
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      onExit();
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+  }, [timeLeft, onExit]);
+
+  const addTime = () => {
+    // Add 60 seconds, max 20 minutes (1200 seconds)
+    setTimeLeft((prevTime) => Math.min(prevTime + 60, 1200));
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+
   return (
     <div className="fixed inset-0 z-50 bg-black overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
@@ -146,6 +176,30 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion }: HalftoneWaveProps) 
             }}
           />
         ))}
+      </div>
+      
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/50 backdrop-blur-sm p-3 rounded-full text-white shadow-lg z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-white/20"
+          onClick={addTime}
+          aria-label="Add 60 seconds"
+        >
+          <Plus size={20} />
+        </Button>
+        <div className="text-2xl font-mono w-24 text-center" suppressHydrationWarning>
+          {formatTime(timeLeft)}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-white/20"
+          onClick={onExit}
+          aria-label="Exit experience"
+        >
+          <X size={20} />
+        </Button>
       </div>
     </div>
   );
