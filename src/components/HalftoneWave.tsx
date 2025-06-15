@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { emotions } from "../data/emotions";
 import { Button } from "@/components/ui/button";
@@ -37,17 +38,18 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
 
     let animationFrameId: number;
     let time = 0;
+    const gridSize = 20;
+    let dots: { x: number; y: number; dist: number }[] = [];
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    };
-
-    const drawHalftoneWave = () => {
-      const gridSize = 20;
+      
       const rows = Math.ceil(canvas.height / gridSize);
       const cols = Math.ceil(canvas.width / gridSize);
-
+      const maxDistance = Math.sqrt(Math.pow(canvas.width / 2, 2) + Math.pow(canvas.height / 2, 2));
+      
+      dots = [];
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const centerX = x * gridSize + gridSize / 2;
@@ -55,18 +57,27 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
           const dx = centerX - canvas.width / 2;
           const dy = centerY - canvas.height / 2;
           const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
-          const maxDistance = Math.sqrt(Math.pow(canvas.width / 2, 2) + Math.pow(canvas.height / 2, 2));
-          const normalizedDistance = distanceFromCenter / maxDistance;
+          dots.push({
+            x: centerX,
+            y: centerY,
+            dist: distanceFromCenter / maxDistance,
+          });
+        }
+      }
+    };
 
-          const waveOffset = Math.sin(normalizedDistance * 10 - time) * 0.5 + 0.5;
-          const size = gridSize * waveOffset * 0.8;
+    const drawHalftoneWave = () => {
+      dots.forEach(dot => {
+        const waveOffset = Math.sin(dot.dist * 10 - time) * 0.5 + 0.5;
+        const size = gridSize * waveOffset * 0.8;
 
+        if (size > 0.1) { // Only draw if the dot is visible
           ctx.beginPath();
-          ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+          ctx.arc(dot.x, dot.y, size / 2, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${waveOffset * 0.7})`;
           ctx.fill();
         }
-      }
+      });
     };
 
     const animate = () => {
