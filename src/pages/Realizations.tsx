@@ -4,8 +4,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 type Realization = {
   id: string;
@@ -46,10 +47,30 @@ const Realizations = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex flex-col items-center py-10">
-      <Card className="w-full max-w-3xl p-8 shadow-lg">
+      <Card className="w-full max-w-3xl p-8 shadow-lg relative">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-6 left-6 flex items-center"
+          onClick={() => navigate("/")}
+        >
+          <ArrowLeft className="mr-2" />
+          Back
+        </Button>
         <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           My Realizations
         </h2>
+        {/* Personality Awareness CTA */}
+        <div className="w-full flex justify-center mb-8">
+          <Button
+            variant="secondary"
+            className="text-lg px-6 py-3 rounded-full shadow"
+            onClick={() => navigate("/personality")}
+          >
+            Personality Awareness
+          </Button>
+        </div>
         {fetching ? (
           <div className="flex justify-center py-12">
             <Loader2 className="animate-spin h-7 w-7 text-blue-500" />
@@ -86,4 +107,3 @@ const Realizations = () => {
 };
 
 export default Realizations;
-
