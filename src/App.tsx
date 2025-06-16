@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Realizations from "./pages/Realizations";
 import PersonalityTest from "./pages/PersonalityTest";
+import EQAssessment from "./pages/EQAssessment";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/realizations" element={<Realizations />} />
           <Route path="/personality" element={<PersonalityTest />} />
+          <Route path="/eq-assessment" element={<EQAssessment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
