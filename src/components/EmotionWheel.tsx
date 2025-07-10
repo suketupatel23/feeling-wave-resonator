@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Wind } from "lucide-react";
 import { useAudioContext } from "../hooks/useAudioContext";
 import { emotions } from "../data/emotions";
+import BoxBreathing from "./BoxBreathing";
 
 interface EmotionWheelProps {
   selectedQuestion: string;
@@ -13,6 +14,7 @@ interface EmotionWheelProps {
 
 const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWheelProps) => {
   const [hoveredEmotion, setHoveredEmotion] = useState<string>("");
+  const [showBoxBreathing, setShowBoxBreathing] = useState(false);
   const { playEmotionSound, stopSound } = useAudioContext();
 
   const handleEmotionHover = (emotionKey: string) => {
@@ -50,11 +52,18 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
             {selectedQuestion}...
           </p>
           <p className="text-sm text-gray-500 mt-1">
-            Hover over emotions to hear healing sounds
+            Hover over emotions to hear healing sounds and click to start your 1-minute meditation
           </p>
         </div>
         
-        <div className="w-32"></div>
+        <Button
+          onClick={() => setShowBoxBreathing(true)}
+          variant="outline"
+          className="flex items-center gap-2 hover:bg-blue-50"
+        >
+          <Wind size={20} />
+          Box Breathing
+        </Button>
       </div>
 
       <div 
@@ -185,6 +194,13 @@ const EmotionWheel = ({ selectedQuestion, onEmotionSelect, onReset }: EmotionWhe
           )
         })()}
       </div>
+      
+      {showBoxBreathing && (
+        <BoxBreathing
+          emotionColor={hoveredEmotion ? emotions[hoveredEmotion as keyof typeof emotions]?.color || "#6366f1" : "#6366f1"}
+          onClose={() => setShowBoxBreathing(false)}
+        />
+      )}
     </div>
   );
 };

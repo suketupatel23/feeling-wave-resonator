@@ -110,7 +110,7 @@ const HalftoneWave = ({ selectedQuestion, selectedEmotion, onExit }: HalftoneWav
             ${animationPhase >= 2 ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}
           `}>
             <p className="text-xl text-purple-200 drop-shadow">
-              Embrace this feeling with compassion
+              Embrace this feeling with self compassion
             </p>
           </div>
         </div>

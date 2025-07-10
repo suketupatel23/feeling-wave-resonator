@@ -18,36 +18,45 @@ const QuestionSelector = ({ onQuestionSelect }: QuestionSelectorProps) => {
     "I don't understand why I'm feeling"
   ];
 
+  const circleColors = [
+    "from-violet-400 to-purple-600",
+    "from-blue-400 to-indigo-600", 
+    "from-teal-400 to-cyan-600",
+    "from-emerald-400 to-green-600",
+    "from-amber-400 to-orange-600",
+    "from-rose-400 to-pink-600"
+  ];
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+    <div className="max-w-4xl mx-auto">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Choose what resonates with you right now
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-lg">
           Select the statement that best describes your current emotional state
         </p>
       </div>
       
-      <div className="grid gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 place-items-center">
         {questions.map((question, index) => (
-          <Button
+          <div
             key={index}
             onClick={() => onQuestionSelect(question)}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
-            variant="outline"
             className={`
-              h-16 text-lg font-medium transition-all duration-300 transform
-              hover:scale-105 hover:shadow-lg border-2
-              ${hoveredIndex === index 
-                ? 'border-purple-400 bg-purple-50 text-purple-700' 
-                : 'border-gray-200 hover:border-purple-300'
-              }
+              w-40 h-40 rounded-full cursor-pointer transition-all duration-500 transform
+              bg-gradient-to-br ${circleColors[index]}
+              hover:scale-110 hover:shadow-2xl hover:shadow-purple-300/50
+              flex items-center justify-center text-center p-4
+              ${hoveredIndex === index ? 'scale-105 shadow-xl shadow-purple-200/60' : ''}
             `}
           >
-            {question}...
-          </Button>
+            <span className="text-white font-medium text-lg leading-tight drop-shadow-lg">
+              {question}...
+            </span>
+          </div>
         ))}
       </div>
     </div>

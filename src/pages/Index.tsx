@@ -98,9 +98,15 @@ const Index = () => {
           <h1 className="text-6xl font-serif font-bold text-primary mb-6 tracking-tight">
             Emotional Sublation
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-4">
             Ruminate and transcend your emotional state through tonal supported meditation
           </p>
+          <button
+            className="text-primary underline font-medium text-lg hover:text-primary/80 transition-colors"
+            onClick={() => navigate("/realizations")}
+          >
+            Self Realizations
+          </button>
         </header>
 
         {!selectedQuestion ? (
