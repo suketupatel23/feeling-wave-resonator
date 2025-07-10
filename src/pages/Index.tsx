@@ -95,11 +95,11 @@ const Index = () => {
               )}
             </div>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
-            SelfAware
+          <h1 className="text-6xl font-serif font-bold text-primary mb-6 tracking-tight">
+            Emotional Sublation
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Explore your emotions through an interactive healing experience
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Ruminate and transcend your emotional state through tonal supported meditation
           </p>
         </header>
 

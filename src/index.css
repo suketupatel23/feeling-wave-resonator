@@ -15,8 +15,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 267 84% 65%;
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 267 84% 75%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -32,7 +33,12 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 267 84% 65%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(267 84% 65%), hsl(220 91% 65%));
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    --shadow-elevated: 0 10px 40px -15px hsl(267 84% 65% / 0.3);
+    --shadow-soft: 0 4px 12px -2px hsl(0 0% 0% / 0.1);
 
     --radius: 0.5rem;
 

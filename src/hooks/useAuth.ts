@@ -75,6 +75,27 @@ export function useAuth() {
     return error;
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`
+      }
+    });
+    setLoading(false);
+    return error;
+  };
+
+  const forgotPassword = async (email: string) => {
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?mode=reset`
+    });
+    setLoading(false);
+    return error;
+  };
+
   const logout = async () => {
     setLoading(true);
     await supabase.auth.signOut();
@@ -88,6 +109,8 @@ export function useAuth() {
     loading,
     login,
     signUp,
+    signInWithGoogle,
+    forgotPassword,
     logout,
   };
 }
